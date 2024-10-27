@@ -9,11 +9,19 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    builders/plasma/baseplasmabuilder.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    plasma/approcplasma.cpp \
+    plasma/randomplasma.cpp \
+    plasma/baseplasma.cpp
 
 HEADERS += \
-    mainwindow.h
+    builders/plasma/baseplasmabuilder.h \
+    mainwindow.h \
+    plasma/approcplasma.h \
+    plasma/randomplasma.h \
+    plasma/baseplasma.h
 
 FORMS += \
     mainwindow.ui
