@@ -15,10 +15,12 @@ public:
 protected:
     void build(int x1, int y1, int x2, int y2);
     int getRandValue();
-    int getMiddleVal(QVector<int> points);
+    int getMiddleVal(QVector<double> points);
     int fixValue(int value);
 
 private:
+    int _deflection;
+    double _alpha;
     QRandomGenerator _rand;
 };
 

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include "plasma\baseplasma.h"
 
@@ -21,7 +22,11 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_generateButton_clicked();
+
+    void on_savePlasmaButton_clicked();
+
+    void on_loadPlasmaButton_clicked();
 
 private:
     Ui::MainWindow *ui;

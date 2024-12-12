@@ -1,27 +1,22 @@
 #include "baseplasma.h"
-#include <qdatetime.h>
-#include <cmath>
+#include <QDebug>
 
-BasePlasma::BasePlasma(int width, int height, int deflection, double alpha)
-    : _width(width), _height(height), _deflection(deflection), _alpha(alpha)
+BasePlasma::BasePlasma(int width, int height)
+    : _width(width), _height(height)
 {
     _data.resize(height);
     _colors.resize(height);
     for (int i = 0; i < height; ++i) {
         _data[i].resize(width);
         _colors[i].resize(width);
-        for (int j = 0; j < width; ++j) {
+        for (int j = 0; j < width; ++j)
             _data[i][j] = MAX_DEPTH - 1;
-        }
     }
 }
 
 BasePlasma::~BasePlasma() {}
 
-QVector<QVector<int>> BasePlasma::getHeight()
-{
-    return _data;
-}
+QVector<QVector<double>> BasePlasma::getHeight() { return _data; }
 
 QVector<QVector<QColor>> BasePlasma::getColors()
 {
@@ -57,4 +52,17 @@ void BasePlasma::convertToMap()
     for (int i = 0; i < _height; ++i)
         for (int j = 0; j < _width; ++j)
             _colors[i][j] = convertValToColor(_data[i][j]);
+}
+
+void BasePlasma::savePlasma(std::string filename)
+{
+    std::ofstream file(DIR_DATA + filename);
+    file << _width << " " << _height << std::endl;
+    for (int i = 0; i < _width; ++i)
+    {
+        for (int j = 0; j < _height; ++j)
+            file << _data[i][j] << " ";
+        file << std::endl;
+    }
+    file.close();
 }
