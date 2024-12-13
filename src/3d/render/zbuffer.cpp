@@ -20,6 +20,8 @@ QVector<QVector<QColor>> ZBuffer::renderImage(SurfaceModel surface, Light light)
     {
         QVector3D face = faces[i];
         QColor color = colors[i];
+
+        renderFace(points, face, normals, color, light);
     }
 
     return _image_buffer;

@@ -4,7 +4,8 @@
 #include <QMainWindow>
 #include <QFileDialog>
 
-#include "plasma\baseplasma.h"
+#include "plasma/baseplasma.h"
+#include "3d/scene3d.h"
 
 #define  WIDTH     512
 #define HEIGHT     512
@@ -31,5 +32,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     BasePlasma *_plasma;
+    Scene3D *_scene3d;
 };
 #endif // MAINWINDOW_H

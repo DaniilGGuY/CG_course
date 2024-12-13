@@ -26,6 +26,8 @@ void MainWindow::on_generateButton_clicked()
     _plasma->setSceneRect(0, 0, width, height);
     _plasma->draw();
     ui->plasmaView->setScene(_plasma);
+    _scene3d = new Scene3D(width, height, _plasma);
+    ui->view3D->setScene(_scene3d);
 }
 
 void MainWindow::on_savePlasmaButton_clicked()
