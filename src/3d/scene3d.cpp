@@ -4,7 +4,7 @@ Scene3D::Scene3D(int width, int height, BasePlasma *plasma) : _width(width), _he
 {
     if (plasma) {
         SurfaceModel surface(plasma->getHeight(), plasma->getColors());
-        Light light(QVector3D(0, 0, 0));
+        Light light(QVector3D(0, 0, 500), Qt::white, 1.2);
         ZBuffer image(_height, _width);
         _colors = image.renderImage(surface, light);
     }
