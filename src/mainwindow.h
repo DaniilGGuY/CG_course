@@ -34,4 +34,5 @@ private:
     BasePlasma *_plasma;
     Scene3D *_scene3d;
 };
+
 #endif // MAINWINDOW_H

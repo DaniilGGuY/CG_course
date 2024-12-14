@@ -7,9 +7,13 @@
 #include "3d/objects/light/light.h"
 #include "3d/objects/model/surfacemodel.h"
 
+#define HEIGHT       512
+#define WIDTH        512
+
 class ZBuffer
 {
 public:
+    ZBuffer();
     ZBuffer(int height, int width);
 
     QVector<QVector<QColor>> renderImage(SurfaceModel surface, Light light);

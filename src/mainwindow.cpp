@@ -26,8 +26,8 @@ void MainWindow::on_generateButton_clicked()
     _plasma->setSceneRect(0, 0, width, height);
     _plasma->draw();
     ui->plasmaView->setScene(_plasma);
-    _scene3d = new Scene3D(width, height, _plasma);
-    _scene3d->setSceneRect(0, 0, width, height);
+    _scene3d = new Scene3D(WIDTH, HEIGHT, _plasma);
+    _scene3d->setSceneRect(0, 0, WIDTH, HEIGHT);
     _scene3d->draw();
     ui->view3D->setScene(_scene3d);
 }

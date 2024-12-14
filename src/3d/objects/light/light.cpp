@@ -1,5 +1,7 @@
 #include "light.h"
 
+Light::Light() : _pos({0, 0, 0}), _color(Qt::white), _intense(1.2) {}
+
 Light::Light(QVector3D pos, QColor color, double intense) : _pos(pos), _color(color), _intense(intense) {}
 
 QVector3D Light::getPos() { return _pos; }

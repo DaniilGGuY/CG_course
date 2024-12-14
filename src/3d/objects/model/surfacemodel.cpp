@@ -1,5 +1,5 @@
 #include "surfacemodel.h"
-
+#include <QDebug>
 SurfaceModel::SurfaceModel(QVector<QVector<double>> map, QVector<QVector<QColor>> color)
 {
     int n = map.size(), m = map[0].size();
@@ -63,6 +63,14 @@ void SurfaceModel::centralize()
     for (auto &point : _points)
         point -= center;
 }
+
+void SurfaceModel::setPoints(QVector<QVector3D> points) { _points = points; }
+
+void SurfaceModel::setFaces(QVector<QVector3D> faces) { _faces = faces; }
+
+void SurfaceModel::setNormals(QVector<QVector3D> normals) { _normals = normals; }
+
+void SurfaceModel::setColors(QVector<QColor> colors) { _colors = colors; }
 
 QVector<QVector3D> SurfaceModel::getPoints() { return _points; }
 

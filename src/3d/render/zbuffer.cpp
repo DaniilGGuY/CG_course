@@ -1,6 +1,12 @@
 #include "zbuffer.h"
 #include <QDebug>
 
+ZBuffer::ZBuffer() : _height(HEIGHT), _width(WIDTH)
+{
+    _z_buffer.resize(_height, QVector<double>(_width, 1e8));
+    _image_buffer.resize(_height, QVector<QColor>(_width, Qt::black));
+}
+
 ZBuffer::ZBuffer(int height, int width) : _height(height), _width(width)
 {
     _z_buffer.resize(_height, QVector<double>(_width, 1e8));
@@ -71,7 +77,7 @@ void ZBuffer::renderFace(QVector<QVector3D> points, QVector3D face, QVector<QVec
             QVector3D normal = calcNormal(n1, n2, n3, baric);
             QVector3D world_point = baric.x() * p1 + baric.y() * p2 + baric.z() * p3;
             QVector3D view = -world_point.normalized();
-            QColor pixel = calcPhong(world_point, normal, color, light, view);
+            QColor pixel = color; //calcPhong(world_point, normal, color, light, view);
             if (z < _z_buffer[y][x]) {
                 _z_buffer[y][x] = z;
                 _image_buffer[y][x] = pixel;

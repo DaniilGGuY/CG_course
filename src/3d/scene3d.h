@@ -2,6 +2,7 @@
 #define SCENE3D_H
 
 #include <QGraphicsScene>
+#include <QKeyEvent>
 
 #include "plasma/baseplasma.h"
 #include "3d/objects/camera/camera.h"
@@ -16,10 +17,20 @@ public:
 
     void draw();
 
+protected:
+    SurfaceModel transformModelToCamera();
+    QVector3D transformPointToCamera(QVector3D point);
+    QVector<QVector3D> transformVectorToCamera(QVector<QVector3D> points);
+    void keyPressEvent(QKeyEvent *event) override;
+
 private:
     int _width;
     int _height;
     QVector<QVector<QColor>> _colors;
+    SurfaceModel _surface;
+    Camera _camera;
+    Light _light;
+    ZBuffer _render;
 };
 
 #endif // SCENE3D_H

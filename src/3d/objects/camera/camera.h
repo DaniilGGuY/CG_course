@@ -4,7 +4,7 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 
-#define RADIUS    7000
+#define RADIUS    1000
 #define SCALE     5000
 #define XZ           0
 #define ZY           0

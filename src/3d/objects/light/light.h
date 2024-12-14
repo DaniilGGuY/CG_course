@@ -7,8 +7,8 @@
 
 class Light {
 public:
-    Light() = default;
-    Light(QVector3D pos = {0, 0, 0}, QColor color = Qt::white, double intense = 1.2);
+    Light();
+    Light(QVector3D pos, QColor color, double intense);
 
     QVector3D getPos();
     QColor getColor();
