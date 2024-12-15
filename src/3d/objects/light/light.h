@@ -8,20 +8,20 @@
 class Light {
 public:
     Light();
-    Light(QVector3D pos, QColor color, double intense);
+    Light(QVector3D pos, QVector3D dir, QColor color);
 
     QVector3D getPos();
     QColor getColor();
-    double getIntense();
+    QVector3D getDir();
 
     void setPos(QVector3D pos);
     void setColor(QColor color);
-    void setIntense(double intense);
+    void setDir(QVector3D dir);
 
 private:
+    QVector3D _dir;
     QVector3D _pos;
     QColor _color;
-    double _intense;
 };
 
 #endif // LIGHT_H

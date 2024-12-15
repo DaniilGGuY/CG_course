@@ -1,19 +1,19 @@
-#include "zbuffer.h"
+#include "render.h"
 #include <QDebug>
 
-ZBuffer::ZBuffer() : _height(HEIGHT), _width(WIDTH)
+Render::Render() : _height(HEIGHT), _width(WIDTH)
 {
     _z_buffer.resize(_height, QVector<double>(_width, 1e8));
     _image_buffer.resize(_height, QVector<QColor>(_width, Qt::black));
 }
 
-ZBuffer::ZBuffer(int height, int width) : _height(height), _width(width)
+Render::Render(int height, int width) : _height(height), _width(width)
 {
     _z_buffer.resize(_height, QVector<double>(_width, 1e8));
     _image_buffer.resize(_height, QVector<QColor>(_width, Qt::black));
 }
 
-QVector<QVector<QColor>> ZBuffer::renderImage(SurfaceModel surface, Light light)
+QVector<QVector<QColor>> Render::renderImage(SurfaceModel surface, Light light)
 {
     resetBuffers();
 
@@ -22,7 +22,6 @@ QVector<QVector<QColor>> ZBuffer::renderImage(SurfaceModel surface, Light light)
     QVector<QVector3D> normals = surface.getNormals();
     QVector<QColor> colors = surface.getColors();
 
-    projection(points);
     for (int i = 0; i < faces.size(); ++i)
     {
         QVector3D face = faces[i];
@@ -33,7 +32,7 @@ QVector<QVector<QColor>> ZBuffer::renderImage(SurfaceModel surface, Light light)
     return _image_buffer;
 }
 
-void ZBuffer::resetBuffers() {
+void Render::resetBuffers() {
     for (int i = 0; i < _height; ++i)
         for (int j = 0; j < _width; ++j)
         {
@@ -42,25 +41,25 @@ void ZBuffer::resetBuffers() {
         }
 }
 
-void ZBuffer::projection(QVector<QVector3D> points)
+QVector3D Render::calcScreenPoint(QVector3D point)
 {
     double perspective = 1000;
-    for (auto &point : points) {
-        double scale = perspective / (perspective + point.z());
-        double x = _width / 2 + point.x() * scale;
-        double y = _height / 2 + point.y() * scale;
-
-        _proj.append(QVector2D(x, y));
-    }
+    double scale = perspective / (perspective + point.z());
+    double x = _width / 2 + point.x() * scale;
+    double y = _height / 2 + point.y() * scale;
+    double z = point.z();
+    return QVector3D(x, y, z);
 }
 
-void ZBuffer::renderFace(QVector<QVector3D> points, QVector3D face, QVector<QVector3D> normals, QColor color, Light light)
+void Render::renderFace(QVector<QVector3D> points, QVector3D face, QVector<QVector3D> normals, QColor color, Light light)
 {
-    QVector2D proj1 = _proj[face.x()], proj2 = _proj[face.y()], proj3 = _proj[face.z()];
-    QVector3D n1 = normals[face.x()], n2 = normals[face.y()], n3 = normals[face.z()];
     QVector3D p1 = points[face.x()], p2 = points[face.y()], p3 = points[face.z()];
+    QVector3D n1 = normals[face.x()], n2 = normals[face.y()], n3 = normals[face.z()];
+    QVector3D proj1 = calcScreenPoint(p1), proj2 = calcScreenPoint(p2), proj3 = calcScreenPoint(p3);
     double z1 = p1.z(), z2 = p2.z(), z3 = p3.z();
-    if (QVector2D::dotProduct((proj2 - proj1), (proj2 - proj3)) == 0) return;
+
+    if ((proj2.x() - proj1.x()) * (proj3.y() - proj1.y()) - (proj3.x() - proj1.x()) * (proj2.y() - proj1.y() == 0))
+        return;
 
     int min_x = std::max(int(floor(std::min({proj1.x(), proj2.x(), proj3.x()}))), 0);
     int min_y = std::max(int(floor(std::min({proj1.y(), proj2.y(), proj3.y()}))), 0);
@@ -68,16 +67,17 @@ void ZBuffer::renderFace(QVector<QVector3D> points, QVector3D face, QVector<QVec
     int max_y = std::min(int(ceil(std::max({proj1.y(), proj2.y(), proj3.y()}))), _height - 1);
     for (int y = min_y; y <= max_y; ++y) {
         for (int x = min_x; x <= max_x; ++x) {
-            QVector2D point(x + 0.5, y + 0.5);
+            QVector2D point(x, y);
 
-            QVector3D baric = calcPoint(point, proj1, proj2, proj3);
+            QVector3D baric = calcBaric(point, proj1, proj2, proj3);
             if (baric.x() < 0 || baric.y() < 0 || baric.z() < 0) continue;
 
             double z = baric.x() * z1 + baric.y() * z2 + baric.z() * z3;
+
             QVector3D normal = calcNormal(n1, n2, n3, baric);
             QVector3D world_point = baric.x() * p1 + baric.y() * p2 + baric.z() * p3;
             QVector3D view = -world_point.normalized();
-            QColor pixel = color; //calcPhong(world_point, normal, color, light, view);
+            QColor pixel = calcPhong(world_point, normal, color, light, view);
             if (z < _z_buffer[y][x]) {
                 _z_buffer[y][x] = z;
                 _image_buffer[y][x] = pixel;
@@ -86,7 +86,7 @@ void ZBuffer::renderFace(QVector<QVector3D> points, QVector3D face, QVector<QVec
     }
 }
 
-QVector3D ZBuffer::calcPoint(QVector2D pi, QVector2D p1, QVector2D p2, QVector2D p3) {
+QVector3D Render::calcBaric(QVector2D pi, QVector3D p1, QVector3D p2, QVector3D p3) {
     double denom = (p2.y() - p3.y()) * (p1.x() - p3.x()) + (p3.x() - p2.x()) * (p1.y() - p3.y());
     double alpha = ((p2.y() - p3.y()) * (pi.x() - p3.x()) + (p3.x() - p2.x()) * (pi.y() - p3.y())) / denom;
     double beta = ((p3.y() - p1.y()) * (pi.x() - p3.x()) + (p1.x() - p3.x()) * (pi.y() - p3.y())) / denom;
@@ -94,9 +94,9 @@ QVector3D ZBuffer::calcPoint(QVector2D pi, QVector2D p1, QVector2D p2, QVector2D
     return QVector3D(alpha, beta, gamma);
 }
 
-QColor ZBuffer::calcPhong(QVector3D point, QVector3D normal, QColor color, Light light, QVector3D view)
+QColor Render::calcPhong(QVector3D point, QVector3D normal, QColor color, Light light, QVector3D view)
 {
-    QVector3D light_vec = (light.getPos() - point).normalized();
+   /* QVector3D light_vec = (light.getPos() - point).normalized();
     QVector3D reflect_vec = (2.0 * QVector3D::dotProduct(normal, light_vec) * normal - light_vec).normalized();
     double ambientStrength = 0.3;
     QColor ambient = QColor(color.red() * ambientStrength * light.getColor().red(),
@@ -116,12 +116,12 @@ QColor ZBuffer::calcPhong(QVector3D point, QVector3D normal, QColor color, Light
 
     int r = std::min(ambient.red() + diffuse.red() + specular.red(), 255);
     int g = std::min(ambient.green() + diffuse.green() + specular.green(), 255);
-    int b = std::min(ambient.blue() + diffuse.blue() + specular.blue(), 255);
+    int b = std::min(ambient.blue() + diffuse.blue() + specular.blue(), 255);*/
 
-    return QColor(r, g, b);
+    return color;
 }
 
-QVector3D ZBuffer::calcNormal(QVector3D n1, QVector3D n2, QVector3D n3, QVector3D barometric)
+QVector3D Render::calcNormal(QVector3D n1, QVector3D n2, QVector3D n3, QVector3D barometric)
 {
     QVector3D normal;
     normal.setX(n1.x() * barometric.x() + n2.x() * barometric.y() + n3.x() * barometric.z());

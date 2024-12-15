@@ -10,7 +10,7 @@ public:
     SurfaceModel() = default;
     SurfaceModel(QVector<QVector<double>> map, QVector<QVector<QColor>> color);
 
-    void checkNormals();
+    void checkOrientation();
     void calcNormals();
     void centralize();
 

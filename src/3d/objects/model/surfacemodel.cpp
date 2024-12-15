@@ -1,35 +1,36 @@
 #include "surfacemodel.h"
 #include <QDebug>
+
 SurfaceModel::SurfaceModel(QVector<QVector<double>> map, QVector<QVector<QColor>> color)
 {
     int n = map.size(), m = map[0].size();
-
+    qDebug() << n << m;
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < m; ++j)
-            _points.append(QVector3D(i, j, map[i][j]));
+            _points.append(QVector3D(j, map[i][j], i));
 
     for (int i = 0; i < n - 1; ++i)
         for (int j = 0; j < m - 1; ++j) {
-            _faces.append(QVector3D(i * m + j, i * m + j + 1, i * (m + 1) + j));
+            _faces.append(QVector3D(i * m + j, i * m + j + 1, (i + 1) * m + j));
             _colors.append(color[i][j]);
-            _faces.append(QVector3D(i * m + j + 1, i * (m + 1) + j, i * (m + 1) + j + 1));
+            _faces.append(QVector3D(i * m + j + 1, (i + 1) * m + j, (i + 1) * m + j + 1));
             _colors.append(color[i + 1][j + 1]);
         }
 
-    checkNormals();
-    calcNormals();
     centralize();
+    checkOrientation();
+    calcNormals();
 }
 
-void SurfaceModel::checkNormals() {
+void SurfaceModel::checkOrientation() {
     for (int i = 0; i < _faces.size(); ++i) {
         QVector3D p1 = _points[_faces[i].y()] - _points[_faces[i].x()];
         QVector3D p2 = _points[_faces[i].z()] - _points[_faces[i].x()];
-        QVector3D normal = QVector3D::crossProduct(p1, p2);
-        QVector3D center = (_points[_faces[i].x()] + _points[_faces[i].y()] + _points[_faces[i].z()]) / 3.0;
+        QVector3D normal = QVector3D::crossProduct(p1, p2).normalized();
+        QVector3D center = ((_points[_faces[i].x()] + _points[_faces[i].y()] + _points[_faces[i].z()]) / 3.0).normalized();
 
         if (QVector3D::dotProduct(normal, center) < 0) {
-            double tmp = _faces[i].y();
+            int tmp = _faces[i].y();
             _faces[i].setY(_faces[i].z());
             _faces[i].setZ(tmp);
         }

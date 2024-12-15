@@ -1,11 +1,12 @@
 #include "scene3d.h"
+#include <QDebug>
 
 Scene3D::Scene3D(int width, int height, BasePlasma *plasma) : _width(width), _height(height)
 {
     if (plasma) {
         _surface = SurfaceModel(plasma->getHeight(), plasma->getColors());
-        _light = Light(QVector3D(500, 500, 500), Qt::white, 1.2);
-        _render = ZBuffer(_height, _width);
+        _light = Light(QVector3D(-1, 0, 1), QVector3D(500, 0, 0), Qt::white);
+        _render = Render(_height, _width);
     }
 }
 
@@ -16,11 +17,11 @@ void Scene3D::draw()
     auto transformed_light = _light;
     transformed_light.setPos(transformPointToCamera(_light.getPos()));
     auto transformed_surface = transformModelToCamera();
-    _colors = _render.renderImage(transformed_surface, transformed_light);
+    _scene = _render.renderImage(transformed_surface, transformed_light);
 
     for (int i = 0; i < _height; ++i)
         for (int j = 0; j < _width; ++j)
-            addLine(i, j, i, j, QPen(_colors[i][j]));
+            addLine(i, j, i, j, QPen(_scene[i][j]));
 }
 
 QVector3D Scene3D::transformPointToCamera(QVector3D point) { return _camera.getView().map(point); }
@@ -28,7 +29,6 @@ QVector3D Scene3D::transformPointToCamera(QVector3D point) { return _camera.getV
 QVector<QVector3D> Scene3D::transformVectorToCamera(QVector<QVector3D> points)
 {
     QMatrix4x4 transform_mat = _camera.getView();
-    qDebug() << transform_mat;
     QVector<QVector3D> transform_points;
     for (auto &point : points)
         transform_points.append(transform_mat.map(point));

@@ -7,7 +7,7 @@
 #include "plasma/baseplasma.h"
 #include "3d/objects/camera/camera.h"
 #include "3d/objects/model/surfacemodel.h"
-#include "3d/render/zbuffer.h"
+#include "3d/render/render.h"
 
 class Scene3D : public QGraphicsScene
 {
@@ -26,11 +26,11 @@ protected:
 private:
     int _width;
     int _height;
-    QVector<QVector<QColor>> _colors;
+    QVector<QVector<QColor>> _scene;
     SurfaceModel _surface;
     Camera _camera;
     Light _light;
-    ZBuffer _render;
+    Render _render;
 };
 
 #endif // SCENE3D_H

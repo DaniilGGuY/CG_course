@@ -12,7 +12,7 @@ SOURCES += \
     3d/objects/camera/camera.cpp \
     3d/objects/light/light.cpp \
     3d/objects/model/surfacemodel.cpp \
-    3d/render/zbuffer.cpp \
+    3d/render/render.cpp \
     3d/scene3d.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -27,7 +27,7 @@ HEADERS += \
     3d/objects/camera/camera.h \
     3d/objects/light/light.h \
     3d/objects/model/surfacemodel.h \
-    3d/render/zbuffer.h \
+    3d/render/render.h \
     3d/scene3d.h \
     mainwindow.h \
     plasma/approcplasma.h \
