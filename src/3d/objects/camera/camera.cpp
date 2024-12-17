@@ -4,7 +4,7 @@
 Camera::Camera()
     : _radius(5000.0),
     _angleXZ(-45),
-    _angleZY(-45) {}
+    _angleZY(45) {}
 
 QMatrix4x4 Camera::getView()
 {
@@ -31,7 +31,7 @@ QMatrix4x4 Camera::getView()
 
 void Camera::reset() {
     _angleXZ = -45;
-    _angleZY = -45;
+    _angleZY = 45;
     _radius = 5000;
 }
 

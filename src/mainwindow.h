@@ -37,6 +37,8 @@ private slots:
 
     void on_setLight_clicked();
 
+    void on_landscapeParamsButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     BasePlasma *_plasma;

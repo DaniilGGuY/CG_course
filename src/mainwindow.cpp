@@ -103,3 +103,9 @@ void MainWindow::on_setLight_clicked()
     _scene3d->setLightPos(new_pos);
     _scene3d->draw();
 }
+
+void MainWindow::on_landscapeParamsButton_clicked()
+{
+    _scene3d->setInterpols(ui->landscapeXWidthSpin->value(), ui->landscapeYWidthSpin->value());
+}
+

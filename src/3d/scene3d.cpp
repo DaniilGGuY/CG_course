@@ -8,12 +8,20 @@ void Scene3D::setParams(int width, int height, QVector3D light_pos)
 {
     _width = width;
     _height = height;
+    _mxw = MXW;
+    _mxh = MXH;
     _camera = Camera();
     _light = Light(light_pos, Qt::white);
     _render = Render(_height, _width, Qt::black);
 }
 
-void Scene3D::loadModel(BasePlasma *plasma) { _model = SurfaceModel::formModel(plasma->getHeight(), plasma->getColors()); }
+void Scene3D::setInterpols(int mxw, int mxh)
+{
+    _mxw = mxw;
+    _mxh = mxh;
+}
+
+void Scene3D::loadModel(BasePlasma *plasma) { _model = SurfaceModel::formModel(plasma->getHeight(), plasma->getColors(), _mxw, _mxh); }
 
 void Scene3D::cameraRotateXZ(double delta) { _camera.addXZ(delta); }
 
@@ -52,12 +60,7 @@ QVector<QVector3D> Scene3D::transformVectorToCamera(QVector<QVector3D> points)
 SurfaceModel Scene3D::transformModelToCamera()
 {
     auto transformed_surface = _model;
-
     QVector<QVector3D> transform_points = transformVectorToCamera(_model._points);
-    //QVector<QVector3D> transform_normals = transformVectorToCamera(_model._normals);
-
-    //transformed_surface._normals = transform_normals;
     transformed_surface._points = transform_points;
-
     return transformed_surface;
 }

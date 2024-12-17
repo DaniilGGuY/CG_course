@@ -8,6 +8,9 @@
 #include "3d/objects/model/surfacemodel.h"
 #include "3d/render/render.h"
 
+#define MXW   50
+#define MXH   50
+
 class Scene3D : public QGraphicsScene
 {
     Q_OBJECT
@@ -24,6 +27,7 @@ public:
     void cameraReset();
     void setLightPos(QVector3D pos);
     void setParams(int width, int height, QVector3D light_pos);
+    void setInterpols(int mxw, int mxh);
 
     void draw();
 
@@ -35,6 +39,8 @@ protected:
 private:
     int _width;
     int _height;
+    int _mxw;
+    int _mxh;
     QVector<QVector<QColor>> _scene;
     SurfaceModel _model;
     Light _light;
