@@ -65,16 +65,16 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_A:
-        _scene3d->cameraRotateXZ(-10);
-        break;
-    case Qt::Key_D:
         _scene3d->cameraRotateXZ(10);
         break;
+    case Qt::Key_D:
+        _scene3d->cameraRotateXZ(-10);
+        break;
     case Qt::Key_W:
-        _scene3d->cameraRotateZY(-10);
+        _scene3d->cameraRotateZY(10);
         break;
     case Qt::Key_S:
-        _scene3d->cameraRotateZY(10);
+        _scene3d->cameraRotateZY(-10);
         break;
     case Qt::Key_Q:
         _scene3d->cameraZoom(-500);

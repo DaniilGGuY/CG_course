@@ -7,6 +7,7 @@ SurfaceModel SurfaceModel::formModel(QVector<QVector<double>> map, QVector<QVect
     int n = map.size(), m = map[0].size();
 
     int stepi = n / mxw, stepj =  m / mxh;
+    QColor base = QColor(6, 125, 18);
 
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < m; ++j)
@@ -15,9 +16,11 @@ SurfaceModel SurfaceModel::formModel(QVector<QVector<double>> map, QVector<QVect
     for (int i = 0; i < n - stepi; i += stepi)
         for (int j = 0; j < m - stepj; j += stepj) {
             model._faces.append({i * m + j, i * m + j + stepj, (i + stepi) * m + j});
-            model._colors.append(colors[i][j]);
             model._faces.append({i * m + j + stepj, (i + stepi) * m + j, (i + stepi) * m + j + stepj});
+            model._colors.append(colors[i][j]);
             model._colors.append(colors[i + stepi][j + stepj]);
+            //model._colors.append(base);
+            //model._colors.append(base);
         }
 
     model.centralizeModel();

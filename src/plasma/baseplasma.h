@@ -7,7 +7,6 @@
 
 #define MAX_DEPTH        -100
 #define MAX_HEIGHT        100
-#define DIR_DATA    "../data/"
 
 class BasePlasma : public QGraphicsScene
 {

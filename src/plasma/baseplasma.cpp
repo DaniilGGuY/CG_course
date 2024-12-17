@@ -56,7 +56,7 @@ void BasePlasma::convertToMap()
 
 void BasePlasma::savePlasma(std::string filename)
 {
-    std::ofstream file(DIR_DATA + filename);
+    std::ofstream file(filename);
     file << _width << " " << _height << std::endl;
     for (int i = 0; i < _width; ++i)
     {

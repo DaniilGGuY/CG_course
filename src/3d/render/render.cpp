@@ -17,7 +17,6 @@ QColor Render::calcShadow(QVector3D &normal, Light &light, QVector3D &point, QCo
     if (intensity > 1) intensity = 1;
 
     return QColor(baseColor.red()*intensity, baseColor.green()*intensity, baseColor.blue()*intensity);
-
 }
 
 QVector<QVector<QColor>> Render::renderImage(SurfaceModel &model, Light &light) {

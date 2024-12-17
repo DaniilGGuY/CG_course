@@ -590,7 +590,7 @@ background-color: rgb(170, 170, 255);</string>
      <number>1000</number>
     </property>
     <property name="value">
-     <number>200</number>
+     <number>150</number>
     </property>
    </widget>
    <widget class="QLabel" name="label_20">
@@ -628,7 +628,7 @@ background-color: rgb(170, 170, 255);</string>
      <number>1000</number>
     </property>
     <property name="value">
-     <number>200</number>
+     <number>150</number>
     </property>
    </widget>
    <widget class="QLabel" name="label_12">
@@ -641,8 +641,8 @@ background-color: rgb(170, 170, 255);</string>
      </rect>
     </property>
     <property name="text">
-     <string>Количество узлов
-в матрице ландшафта</string>
+     <string>Количество узлов в 
+изображении </string>
     </property>
     <property name="alignment">
      <set>Qt::AlignmentFlag::AlignCenter</set>

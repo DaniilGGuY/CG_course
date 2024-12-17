@@ -1,4 +1,5 @@
 #include "scene3d.h"
+#include <QElapsedTimer>
 
 Scene3D::Scene3D(QObject *parent) : QGraphicsScene(parent) { }
 
@@ -39,6 +40,12 @@ void Scene3D::draw()
     transformedLight.setPos(transformPointToCamera(_light.getPos()));
     auto tranformedModel = transformModelToCamera();
     auto renderedImage = _render.renderImage(tranformedModel, transformedLight);
+    /*QElapsedTimer t;
+    t.start();
+    for (int i = 0; i < 100; ++i)
+        auto ri = _render.renderImage(tranformedModel, transformedLight);
+    qint64 time = t.elapsed();
+    qDebug() << time / 100 << "ms";*/
 
     clear();
     for (int i = 0; i < _width; ++i)
