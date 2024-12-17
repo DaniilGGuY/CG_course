@@ -4,32 +4,17 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 
-#define RADIUS    3000
-#define SCALE     5000
-#define XZ           0
-#define ZY           0
-
 class Camera {
 public:
     Camera();
-    Camera(double radius, double xz, double zy);
 
     QMatrix4x4 getView();
-    QVector3D getPos();
 
-    double getRadius();
-    double getXZAngle();
-    double getZYAngle();
+    void reset();
 
-    void setRadius(double radius);
-    void setXZAngle(double xz);
-    void setZYAngle(double zy);
-
+    void addXZ(double delta);
+    void addZY(double delta);
     void addRadius(double delta);
-    void addXZAngle(double delta);
-    void addZYAngle(double delta);
-
-    void dropSettings();
 
 private:
     double _radius;

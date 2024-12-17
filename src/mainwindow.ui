@@ -88,7 +88,7 @@
    <widget class="QRadioButton" name="newtonRadio">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>380</x>
       <y>600</y>
       <width>112</width>
       <height>30</height>
@@ -101,7 +101,7 @@
    <widget class="QRadioButton" name="splineRadio">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>380</x>
       <y>630</y>
       <width>112</width>
       <height>30</height>
@@ -117,7 +117,7 @@
    <widget class="QRadioButton" name="squaresRadio">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>380</x>
       <y>660</y>
       <width>112</width>
       <height>30</height>
@@ -156,9 +156,9 @@
    <widget class="QPushButton" name="loadPlasmaButton">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>380</x>
       <y>700</y>
-      <width>112</width>
+      <width>160</width>
       <height>50</height>
      </rect>
     </property>
@@ -253,7 +253,7 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>200</x>
       <y>570</y>
       <width>150</width>
       <height>30</height>
@@ -269,9 +269,9 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QPushButton" name="generateButton">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>200</x>
       <y>700</y>
-      <width>150</width>
+      <width>160</width>
       <height>50</height>
      </rect>
     </property>
@@ -288,7 +288,7 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>200</x>
       <y>650</y>
       <width>70</width>
       <height>30</height>
@@ -301,7 +301,7 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QDoubleSpinBox" name="alphaSpin">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>280</x>
       <y>650</y>
       <width>70</width>
       <height>30</height>
@@ -320,7 +320,7 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QSpinBox" name="deflectionSpin">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>280</x>
       <y>610</y>
       <width>70</width>
       <height>30</height>
@@ -342,7 +342,7 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>200</x>
       <y>610</y>
       <width>70</width>
       <height>30</height>
@@ -355,7 +355,7 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>380</x>
       <y>570</y>
       <width>112</width>
       <height>30</height>
@@ -368,26 +368,10 @@ background-color: rgb(170, 170, 255);</string>
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
-    <property name="geometry">
-     <rect>
-      <x>568</x>
-      <y>570</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Камера</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>560</x>
       <y>570</y>
       <width>112</width>
       <height>30</height>
@@ -400,125 +384,10 @@ background-color: rgb(170, 170, 255);</string>
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_12">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>600</y>
-      <width>30</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>X</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinBox">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>600</y>
-      <width>60</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="maximum">
-     <number>1000</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinBox_2">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>630</y>
-      <width>60</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="maximum">
-     <number>1000</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_13">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>630</y>
-      <width>30</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Y</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinBox_3">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>660</y>
-      <width>60</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="maximum">
-     <number>1000</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>660</y>
-      <width>30</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Z</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="loadPlasmaButton_2">
-    <property name="geometry">
-     <rect>
-      <x>580</x>
-      <y>700</y>
-      <width>100</width>
-      <height>50</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border-radius: 12px;
-color: black;
-background-color: rgb(170, 170, 255);</string>
-    </property>
-    <property name="text">
-     <string>Установить 
-камеру</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_15">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>560</x>
       <y>660</y>
       <width>30</width>
       <height>30</height>
@@ -531,28 +400,34 @@ background-color: rgb(170, 170, 255);</string>
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_4">
+   <widget class="QSpinBox" name="lightZSpin">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>600</x>
       <y>660</y>
-      <width>60</width>
+      <width>101</width>
       <height>30</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
+    <property name="minimum">
+     <number>-100000</number>
+    </property>
     <property name="maximum">
-     <number>1000</number>
+     <number>100000</number>
+    </property>
+    <property name="value">
+     <number>0</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="loadPlasmaButton_3">
+   <widget class="QPushButton" name="setLight">
     <property name="geometry">
      <rect>
-      <x>730</x>
+      <x>560</x>
       <y>700</y>
-      <width>100</width>
+      <width>160</width>
       <height>50</height>
      </rect>
     </property>
@@ -566,42 +441,54 @@ background-color: rgb(170, 170, 255);</string>
 свет</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_5">
+   <widget class="QSpinBox" name="lightXSpin">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>600</x>
       <y>600</y>
-      <width>60</width>
+      <width>101</width>
       <height>30</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
+    <property name="minimum">
+     <number>-100000</number>
+    </property>
     <property name="maximum">
-     <number>1000</number>
+     <number>100000</number>
+    </property>
+    <property name="value">
+     <number>0</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox_6">
+   <widget class="QSpinBox" name="lightYSpin">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>600</x>
       <y>630</y>
-      <width>60</width>
+      <width>101</width>
       <height>30</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
+    <property name="minimum">
+     <number>-100000</number>
+    </property>
     <property name="maximum">
+     <number>100000</number>
+    </property>
+    <property name="value">
      <number>1000</number>
     </property>
    </widget>
    <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>560</x>
       <y>600</y>
       <width>30</width>
       <height>30</height>
@@ -617,7 +504,7 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QLabel" name="label_17">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>560</x>
       <y>630</y>
       <width>30</width>
       <height>30</height>
@@ -630,12 +517,12 @@ background-color: rgb(170, 170, 255);</string>
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="savePlasmaButton_2">
+   <widget class="QPushButton" name="buildLandscape">
     <property name="geometry">
      <rect>
-      <x>880</x>
+      <x>740</x>
       <y>700</y>
-      <width>91</width>
+      <width>160</width>
       <height>50</height>
      </rect>
     </property>
@@ -652,9 +539,9 @@ background-color: rgb(170, 170, 255);</string>
    <widget class="QPushButton" name="savePlasmaButton_3">
     <property name="geometry">
      <rect>
-      <x>990</x>
+      <x>920</x>
       <y>700</y>
-      <width>91</width>
+      <width>160</width>
       <height>50</height>
      </rect>
     </property>

@@ -9,6 +9,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    _scene3d = new Scene3D;
+    _scene3d->setSceneRect(0, 0, WIDTH, HEIGHT);
+    _scene3d->setParams(WIDTH, HEIGHT, {0, 1000, 0});
+    ui->view3D->setScene(_scene3d);
 }
 
 MainWindow::~MainWindow()
@@ -26,10 +31,6 @@ void MainWindow::on_generateButton_clicked()
     _plasma->setSceneRect(0, 0, width, height);
     _plasma->draw();
     ui->plasmaView->setScene(_plasma);
-    _scene3d = new Scene3D(WIDTH, HEIGHT, _plasma);
-    _scene3d->setSceneRect(0, 0, WIDTH, HEIGHT);
-    _scene3d->draw();
-    ui->view3D->setScene(_scene3d);
 }
 
 void MainWindow::on_savePlasmaButton_clicked()
@@ -58,4 +59,47 @@ void MainWindow::on_loadPlasmaButton_clicked()
     _plasma->setSceneRect(0, 0, width, height);
     _plasma->draw();
     ui->plasmaView->setScene(_plasma);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_A:
+        _scene3d->cameraRotateXZ(-10);
+        break;
+    case Qt::Key_D:
+        _scene3d->cameraRotateXZ(10);
+        break;
+    case Qt::Key_W:
+        _scene3d->cameraRotateZY(-10);
+        break;
+    case Qt::Key_S:
+        _scene3d->cameraRotateZY(10);
+        break;
+    case Qt::Key_Q:
+        _scene3d->cameraZoom(-500);
+        break;
+    case Qt::Key_E:
+        _scene3d->cameraZoom(500);
+        break;
+    case Qt::Key_R:
+        _scene3d->cameraReset();
+    default:
+        break;
+    }
+
+    _scene3d->draw();
+}
+
+void MainWindow::on_buildLandscape_clicked()
+{
+    _scene3d->loadModel(_plasma);
+    _scene3d->draw();
+}
+
+void MainWindow::on_setLight_clicked()
+{
+    QVector3D new_pos = QVector3D(ui->lightXSpin->value(), ui->lightYSpin->value(), ui->lightZSpin->value());
+    _scene3d->setLightPos(new_pos);
+    _scene3d->draw();
 }

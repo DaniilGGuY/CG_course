@@ -7,30 +7,28 @@
 #include "3d/objects/light/light.h"
 #include "3d/objects/model/surfacemodel.h"
 
-#define HEIGHT       512
-#define WIDTH        512
-
 class Render
 {
 public:
-    Render();
-    Render(int height, int width);
+    Render() = default;
+    explicit Render(int height, int width, QColor bg_color);
 
-    QVector<QVector<QColor>> renderImage(SurfaceModel surface, Light light);
-
-protected:
-    void resetBuffers();
-    QVector3D calcScreenPoint(QVector3D point);
-    void renderFace(QVector<QVector3D> points, QVector3D face, QVector<QVector3D> normals, QColor color, Light light);
-    QVector3D calcBaric(QVector2D pi, QVector3D p1, QVector3D p2, QVector3D p3);
-    QColor calcPhong(QVector3D point, QVector3D normal, QColor color, Light light, QVector3D view);
-    QVector3D calcNormal(QVector3D n1, QVector3D n2, QVector3D n3, QVector3D barometric);
+    QVector<QVector<QColor>> renderImage(SurfaceModel &model, Light &light);
 
 private:
     int _height;
     int _width;
     QVector<QVector<double>> _z_buffer;
     QVector<QVector<QColor>> _image_buffer;
+
+    void resetBuffers();
+    void renderTriangle(QVector<QPointF> &projs, QVector<QVector3D> &points, QVector<QVector3D> &normals, QVector<int> &face,
+                        QColor &color, Light &light);
+
+    QVector3D calcBaric(QPointF &point, QPointF &p0, QPointF &p1, QPointF &p2);
+    QVector3D calcNormals(QVector3D n0, QVector3D n1, QVector3D n2, double alpha, double beta, double gamma);
+    QColor calcShadow(QVector3D &normal, Light &light, QVector3D &point, QColor &baseColor);
+    QVector<QPointF> calcProj(QVector<QVector3D> &points);
 };
 
 #endif // RENDER_H

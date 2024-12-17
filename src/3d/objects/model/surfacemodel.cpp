@@ -1,82 +1,62 @@
 #include "surfacemodel.h"
 #include <QDebug>
 
-SurfaceModel::SurfaceModel(QVector<QVector<double>> map, QVector<QVector<QColor>> color)
-{
+SurfaceModel SurfaceModel::formModel(QVector<QVector<double>> map, QVector<QVector<QColor>> colors) {
+    SurfaceModel model;
+
     int n = map.size(), m = map[0].size();
-    qDebug() << n << m;
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < m; ++j)
-            _points.append(QVector3D(j, map[i][j], i));
+            model._points.append(QVector3D(j, map[i][j], i));
 
-    for (int i = 0; i < n - 1; ++i)
-        for (int j = 0; j < m - 1; ++j) {
-            _faces.append(QVector3D(i * m + j, i * m + j + 1, (i + 1) * m + j));
-            _colors.append(color[i][j]);
-            _faces.append(QVector3D(i * m + j + 1, (i + 1) * m + j, (i + 1) * m + j + 1));
-            _colors.append(color[i + 1][j + 1]);
+    int stepi = 1, stepj = 1;
+
+    for (int i = 0; i < n - stepi; i += stepi)
+        for (int j = 0; j < m - stepj; j += stepj) {
+            model._faces.append({i * m + j, i * m + j + stepj, (i + stepi) * m + j});
+            model._colors.append(colors[i][j]);
+            model._faces.append({i * m + j + stepj, (i + stepi) * m + j, (i + stepi) * m + j + stepj});
+            model._colors.append(colors[i + stepi][j + stepj]);
         }
 
-    centralize();
-    checkOrientation();
-    calcNormals();
+    model.centralizeModel();
+    model.checkNormals();
+    model.calcNormals();
+
+    return model;
 }
 
-void SurfaceModel::checkOrientation() {
-    for (int i = 0; i < _faces.size(); ++i) {
-        QVector3D p1 = _points[_faces[i].y()] - _points[_faces[i].x()];
-        QVector3D p2 = _points[_faces[i].z()] - _points[_faces[i].x()];
+void SurfaceModel::checkNormals() {
+    for (auto &face : _faces) {
+        QVector3D p1 = _points[face[1]] - _points[face[0]];
+        QVector3D p2 = _points[face[2]] - _points[face[0]];
         QVector3D normal = QVector3D::crossProduct(p1, p2).normalized();
-        QVector3D center = ((_points[_faces[i].x()] + _points[_faces[i].y()] + _points[_faces[i].z()]) / 3.0).normalized();
-
-        if (QVector3D::dotProduct(normal, center) < 0) {
-            int tmp = _faces[i].y();
-            _faces[i].setY(_faces[i].z());
-            _faces[i].setZ(tmp);
-        }
+        QVector3D center = ((_points[face[0]] + _points[face[1]] + _points[face[2]]) / 3.0).normalized();
+        if (QVector3D::dotProduct(normal, center) < 0)
+            std::swap(face[1], face[2]);
     }
 }
 
 void SurfaceModel::calcNormals() {
     _normals.resize(_points.size());
+    for (auto &face : _faces) {
+        QVector3D p1 = _points[face[1]] - _points[face[0]];
+        QVector3D p2 = _points[face[2]] - _points[face[0]];
+        QVector3D normal = QVector3D::crossProduct(p1, p2).normalized();
+        if (normal.y() < 0)
+            normal *= -1;
 
-    for (int i = 0; i < _faces.size(); ++i) {
-        QVector3D p1 = _points[_faces[i].y()] - _points[_faces[i].x()];
-        QVector3D p2 = _points[_faces[i].z()] - _points[_faces[i].x()];
-        QVector3D normal = QVector3D::crossProduct(p1, p2);
-        _normals[_faces[i].x()] += normal;
-        _normals[_faces[i].y()] += normal;
-        _normals[_faces[i].z()] += normal;
+        _normals[face[0]] = normal;
+        _normals[face[1]] = normal;
+        _normals[face[2]] = normal;
     }
-
-    for (auto &normal : _normals)
-        if (!normal.isNull())
-            normal.normalize();
-
 }
 
-void SurfaceModel::centralize()
-{
+void SurfaceModel::centralizeModel() {
     QVector3D center(0, 0, 0);
-    for (auto &point : _points)
-        center += point;
+    for (auto &vertex : _points)
+        center += vertex;
     center /= _points.size();
-    for (auto &point : _points)
-        point -= center;
+    for (auto &vertex : _points)
+        vertex -= center;
 }
-
-void SurfaceModel::setPoints(QVector<QVector3D> points) { _points = points; }
-
-void SurfaceModel::setFaces(QVector<QVector3D> faces) { _faces = faces; }
-
-void SurfaceModel::setNormals(QVector<QVector3D> normals) { _normals = normals; }
-
-void SurfaceModel::setColors(QVector<QColor> colors) { _colors = colors; }
-
-QVector<QVector3D> SurfaceModel::getPoints() { return _points; }
-
-QVector<QVector3D> SurfaceModel::getFaces() { return _faces; }
-
-QVector<QVector3D> SurfaceModel::getNormals() { return _normals; }
-
-QVector<QColor> SurfaceModel::getColors() { return _colors; }

@@ -1,27 +1,41 @@
 #include "scene3d.h"
-#include <QDebug>
 
-Scene3D::Scene3D(int width, int height, BasePlasma *plasma) : _width(width), _height(height)
-{
-    if (plasma) {
-        _surface = SurfaceModel(plasma->getHeight(), plasma->getColors());
-        _light = Light(QVector3D(-1, 0, 1), QVector3D(500, 0, 0), Qt::white);
-        _render = Render(_height, _width);
-    }
-}
+Scene3D::Scene3D(QObject *parent) : QGraphicsScene(parent) { }
 
 Scene3D::~Scene3D() {}
 
+void Scene3D::setParams(int width, int height, QVector3D light_pos)
+{
+    _width = width;
+    _height = height;
+    _camera = Camera();
+    _light = Light(light_pos, Qt::white);
+    _render = Render(_height, _width, Qt::black);
+}
+
+void Scene3D::loadModel(BasePlasma *plasma) { _model = SurfaceModel::formModel(plasma->getHeight(), plasma->getColors()); }
+
+void Scene3D::cameraRotateXZ(double delta) { _camera.addXZ(delta); }
+
+void Scene3D::cameraRotateZY(double delta) { _camera.addZY(delta); }
+
+void Scene3D::cameraZoom(double delta) { _camera.addRadius(delta); }
+
+void Scene3D::cameraReset() { _camera.reset(); }
+
+void Scene3D::setLightPos(QVector3D pos) { _light.setPos(pos); }
+
 void Scene3D::draw()
 {
-    auto transformed_light = _light;
-    transformed_light.setPos(transformPointToCamera(_light.getPos()));
-    auto transformed_surface = transformModelToCamera();
-    _scene = _render.renderImage(transformed_surface, transformed_light);
+    Light transformedLight = _light;
+    transformedLight.setPos(transformPointToCamera(_light.getPos()));
+    auto tranformedModel = transformModelToCamera();
+    auto renderedImage = _render.renderImage(tranformedModel, transformedLight);
 
-    for (int i = 0; i < _height; ++i)
-        for (int j = 0; j < _width; ++j)
-            addLine(i, j, i, j, QPen(_scene[i][j]));
+    clear();
+    for (int i = 0; i < _width; ++i)
+        for (int j = 0; j < _height; ++j)
+            addLine(i, j, i, j, QPen(renderedImage[_height - 1 - j][_width - 1 - i]));
 }
 
 QVector3D Scene3D::transformPointToCamera(QVector3D point) { return _camera.getView().map(point); }
@@ -37,44 +51,13 @@ QVector<QVector3D> Scene3D::transformVectorToCamera(QVector<QVector3D> points)
 
 SurfaceModel Scene3D::transformModelToCamera()
 {
-    auto transformed_surface = _surface;
+    auto transformed_surface = _model;
 
-    QVector<QVector3D> transform_points = transformVectorToCamera(_surface.getPoints());
-    QVector<QVector3D> transform_normals = transformVectorToCamera(_surface.getNormals());
+    QVector<QVector3D> transform_points = transformVectorToCamera(_model._points);
+    //QVector<QVector3D> transform_normals = transformVectorToCamera(_model._normals);
 
-    transformed_surface.setNormals(transform_normals);
-    transformed_surface.setPoints(transform_points);
+    //transformed_surface._normals = transform_normals;
+    transformed_surface._points = transform_points;
 
     return transformed_surface;
-}
-
-void Scene3D::keyPressEvent(QKeyEvent *event) {
-    switch (event->key())
-    {
-        case Qt::Key_A:
-            _camera.addXZAngle(-5);
-            break;
-        case Qt::Key_D:
-            _camera.addXZAngle(5);
-            break;
-        case Qt::Key_W:
-            _camera.addZYAngle(-5);
-            break;
-        case Qt::Key_S:
-            _camera.addZYAngle(5);
-            break;
-        case Qt::Key_Q:
-            _camera.addRadius(-100);
-            break;
-        case Qt::Key_E:
-            _camera.addRadius(100);
-            break;
-        case Qt::Key_R:
-            _camera.dropSettings();
-            break;
-        default:
-            break;
-    }
-
-    draw();
 }

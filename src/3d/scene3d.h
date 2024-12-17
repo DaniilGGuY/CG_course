@@ -2,7 +2,6 @@
 #define SCENE3D_H
 
 #include <QGraphicsScene>
-#include <QKeyEvent>
 
 #include "plasma/baseplasma.h"
 #include "3d/objects/camera/camera.h"
@@ -11,9 +10,20 @@
 
 class Scene3D : public QGraphicsScene
 {
+    Q_OBJECT
+
 public:
-    explicit Scene3D(int width = 512, int height = 512, BasePlasma *plasma = NULL);
+    explicit Scene3D(QObject *parent = 0);
     ~Scene3D();
+
+    void loadModel(BasePlasma *plasma);
+
+    void cameraRotateXZ(double delta);
+    void cameraRotateZY(double delta);
+    void cameraZoom(double delta);
+    void cameraReset();
+    void setLightPos(QVector3D pos);
+    void setParams(int width, int height, QVector3D light_pos);
 
     void draw();
 
@@ -21,15 +31,14 @@ protected:
     SurfaceModel transformModelToCamera();
     QVector3D transformPointToCamera(QVector3D point);
     QVector<QVector3D> transformVectorToCamera(QVector<QVector3D> points);
-    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     int _width;
     int _height;
     QVector<QVector<QColor>> _scene;
-    SurfaceModel _surface;
-    Camera _camera;
+    SurfaceModel _model;
     Light _light;
+    Camera _camera;
     Render _render;
 };
 

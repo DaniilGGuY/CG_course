@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QKeyEvent>
 
 #include "plasma/baseplasma.h"
 #include "3d/scene3d.h"
@@ -22,12 +23,19 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+
 private slots:
     void on_generateButton_clicked();
 
     void on_savePlasmaButton_clicked();
 
     void on_loadPlasmaButton_clicked();
+
+    void on_buildLandscape_clicked();
+
+    void on_setLight_clicked();
 
 private:
     Ui::MainWindow *ui;

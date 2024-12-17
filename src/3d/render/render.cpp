@@ -1,132 +1,107 @@
 #include "render.h"
+
 #include <QDebug>
 
-Render::Render() : _height(HEIGHT), _width(WIDTH)
-{
-    _z_buffer.resize(_height, QVector<double>(_width, 1e8));
-    _image_buffer.resize(_height, QVector<QColor>(_width, Qt::black));
+Render::Render(int height, int width, QColor bg_color) : _height(height), _width(width) {
+    _z_buffer.resize(_height, QVector<double>(_width, std::numeric_limits<double>::infinity()));
+    _image_buffer.resize(_height, QVector<QColor>(_width, bg_color));
 }
 
-Render::Render(int height, int width) : _height(height), _width(width)
-{
-    _z_buffer.resize(_height, QVector<double>(_width, 1e8));
-    _image_buffer.resize(_height, QVector<QColor>(_width, Qt::black));
+QColor Render::calcShadow(QVector3D &normal, Light &light, QVector3D &point, QColor &baseColor) {
+    QVector3D lightDir = (light.getPos() - point);
+    lightDir.normalize();
+
+    double intensity = QVector3D::dotProduct(lightDir, normal);
+    intensity = intensity > 1 ? 1 : intensity;
+    if (intensity > 0)
+        return QColor(baseColor.red()*intensity, baseColor.green()*intensity, baseColor.blue()*intensity);
+    qDebug() << point << lightDir << normal;
+    return Qt::black;
 }
 
-QVector<QVector<QColor>> Render::renderImage(SurfaceModel surface, Light light)
-{
+QVector<QVector<QColor>> Render::renderImage(SurfaceModel &model, Light &light) {
     resetBuffers();
 
-    QVector<QVector3D> points = surface.getPoints();
-    QVector<QVector3D> faces = surface.getFaces();
-    QVector<QVector3D> normals = surface.getNormals();
-    QVector<QColor> colors = surface.getColors();
+    auto projectedVertices = calcProj(model._points);
 
-    for (int i = 0; i < faces.size(); ++i)
-    {
-        QVector3D face = faces[i];
-        QColor color = colors[i];
-        renderFace(points, face, normals, color, light);
+    for (int i = 0; i < model._faces.size(); ++i) {
+        auto &triangle = model._faces[i];
+        auto &normals = model._normals;
+        auto color = model._colors[i];
+
+        renderTriangle(projectedVertices, model._points, normals, triangle, color, light);
     }
 
     return _image_buffer;
 }
 
-void Render::resetBuffers() {
-    for (int i = 0; i < _height; ++i)
-        for (int j = 0; j < _width; ++j)
-        {
-            _z_buffer[i][j] = 1e8;
-            _image_buffer[i][j] = Qt::black;
-        }
+QVector3D Render::calcNormals(QVector3D n0, QVector3D n1, QVector3D n2, double alpha, double beta, double gamma) {
+    QVector3D result;
+    result.setX(n0.x() * alpha + n1.x() * beta + n2.x() * gamma);
+    result.setY(n0.y() * alpha + n1.y() * beta + n2.y() * gamma);
+    result.setZ(n0.z() * alpha + n1.z() * beta + n2.z() * gamma);
+
+    return result;
 }
 
-QVector3D Render::calcScreenPoint(QVector3D point)
-{
-    double perspective = 1000;
-    double scale = perspective / (perspective + point.z());
-    double x = _width / 2 + point.x() * scale;
-    double y = _height / 2 + point.y() * scale;
-    double z = point.z();
-    return QVector3D(x, y, z);
-}
+void Render::renderTriangle(QVector<QPointF> &projs, QVector<QVector3D> &points, QVector<QVector3D> &normals, QVector<int> &face,
+                            QColor &color, Light &light) {
+    QPointF p0 = projs[face[0]], p1 = projs[face[1]], p2 = projs[face[2]];
+    QVector3D n0 = normals[face[0]], n1 = normals[face[1]], n2 = normals[face[2]];
+    double z0 = points[face[0]].z(), z1 = points[face[1]].z(), z2 = points[face[2]].z();
+    QVector3D v0 = points[face[0]], v1 = points[face[1]], v2 = points[face[2]];
 
-void Render::renderFace(QVector<QVector3D> points, QVector3D face, QVector<QVector3D> normals, QColor color, Light light)
-{
-    QVector3D p1 = points[face.x()], p2 = points[face.y()], p3 = points[face.z()];
-    QVector3D n1 = normals[face.x()], n2 = normals[face.y()], n3 = normals[face.z()];
-    QVector3D proj1 = calcScreenPoint(p1), proj2 = calcScreenPoint(p2), proj3 = calcScreenPoint(p3);
-    double z1 = p1.z(), z2 = p2.z(), z3 = p3.z();
+    if ((p1.y() - p2.y()) * (p0.x() - p2.x()) + (p2.x() - p1.x()) * (p0.y() - p2.y()) < 1e-6) return;
 
-    if ((proj2.x() - proj1.x()) * (proj3.y() - proj1.y()) - (proj3.x() - proj1.x()) * (proj2.y() - proj1.y() == 0))
-        return;
+    int minX = std::max(0, static_cast<int>(std::floor(std::min({p0.x(), p1.x(), p2.x()}))));
+    int maxX = std::min(_width - 1, static_cast<int>(std::ceil(std::max({p0.x(), p1.x(), p2.x()}))));
+    int minY = std::max(0, static_cast<int>(std::floor(std::min({p0.y(), p1.y(), p2.y()}))));
+    int maxY = std::min(_height - 1, static_cast<int>(std::ceil(std::max({p0.y(), p1.y(), p2.y()}))));
 
-    int min_x = std::max(int(floor(std::min({proj1.x(), proj2.x(), proj3.x()}))), 0);
-    int min_y = std::max(int(floor(std::min({proj1.y(), proj2.y(), proj3.y()}))), 0);
-    int max_x = std::min(int(ceil(std::max({proj1.x(), proj2.x(), proj3.x()}))), _width - 1);
-    int max_y = std::min(int(ceil(std::max({proj1.y(), proj2.y(), proj3.y()}))), _height - 1);
-    for (int y = min_y; y <= max_y; ++y) {
-        for (int x = min_x; x <= max_x; ++x) {
-            QVector2D point(x, y);
+    for (int y = minY; y <= maxY; ++y) {
+        for (int x = minX; x <= maxX; ++x) {
+            QPointF point(x + 0.5, y + 0.5);
 
-            QVector3D baric = calcBaric(point, proj1, proj2, proj3);
+            QVector3D baric = calcBaric(point, p0, p1, p2);
             if (baric.x() < 0 || baric.y() < 0 || baric.z() < 0) continue;
 
-            double z = baric.x() * z1 + baric.y() * z2 + baric.z() * z3;
+            double z = baric.x() * z0 + baric.y() * z1 + baric.z() * z2;
 
-            QVector3D normal = calcNormal(n1, n2, n3, baric);
-            QVector3D world_point = baric.x() * p1 + baric.y() * p2 + baric.z() * p3;
-            QVector3D view = -world_point.normalized();
-            QColor pixel = calcPhong(world_point, normal, color, light, view);
+            QVector3D normal = calcNormals(n0, n1, n2, baric.x(), baric.y(), baric.z());
+            QVector3D worldPoint = baric.x() * v0 + baric.y() * v1 + baric.z() * v2;
+            QColor pix_color = calcShadow(normal, light, worldPoint, color);
+
             if (z < _z_buffer[y][x]) {
                 _z_buffer[y][x] = z;
-                _image_buffer[y][x] = pixel;
+                _image_buffer[y][x] = pix_color;
             }
         }
     }
 }
 
-QVector3D Render::calcBaric(QVector2D pi, QVector3D p1, QVector3D p2, QVector3D p3) {
-    double denom = (p2.y() - p3.y()) * (p1.x() - p3.x()) + (p3.x() - p2.x()) * (p1.y() - p3.y());
-    double alpha = ((p2.y() - p3.y()) * (pi.x() - p3.x()) + (p3.x() - p2.x()) * (pi.y() - p3.y())) / denom;
-    double beta = ((p3.y() - p1.y()) * (pi.x() - p3.x()) + (p1.x() - p3.x()) * (pi.y() - p3.y())) / denom;
+QVector3D Render::calcBaric(QPointF &point, QPointF &p0, QPointF &p1, QPointF &p2) {
+    double denom = (p1.y() - p2.y()) * (p0.x() - p2.x()) + (p2.x() - p1.x()) * (p0.y() - p2.y());
+    double alpha = ((p1.y() - p2.y()) * (point.x() - p2.x()) + (p2.x() - p1.x()) * (point.y() - p2.y())) / denom;
+    double beta = ((p2.y() - p0.y()) * (point.x() - p2.x()) + (p0.x() - p2.x()) * (point.y() - p2.y())) / denom;
     double gamma = 1.0 - alpha - beta;
     return QVector3D(alpha, beta, gamma);
 }
 
-QColor Render::calcPhong(QVector3D point, QVector3D normal, QColor color, Light light, QVector3D view)
-{
-   /* QVector3D light_vec = (light.getPos() - point).normalized();
-    QVector3D reflect_vec = (2.0 * QVector3D::dotProduct(normal, light_vec) * normal - light_vec).normalized();
-    double ambientStrength = 0.3;
-    QColor ambient = QColor(color.red() * ambientStrength * light.getColor().red(),
-                            color.green() * ambientStrength * light.getColor().green(),
-                            color.blue() * ambientStrength * light.getColor().blue());
-
-    double diffuseStrength = std::pow(std::max(QVector3D::dotProduct(normal, light_vec), 0.2f), 0.7);
-    QColor diffuse = QColor(color.red() * diffuseStrength * light.getIntense() * light.getColor().red(),
-                            color.green() * diffuseStrength * light.getIntense() * light.getColor().green(),
-                            color.blue() * diffuseStrength * light.getIntense() * light.getColor().blue());
-
-    double specularStrength = 0.0;
-    double spec = std::pow(std::max(QVector3D::dotProduct(view, reflect_vec), 0.0f), 32.0);
-    QColor specular = QColor(255 * spec * light.getIntense() * specularStrength * light.getColor().red(),
-                             255 * spec * light.getIntense() * specularStrength * light.getColor().green(),
-                             255 * spec * light.getIntense() * specularStrength * light.getColor().blue());
-
-    int r = std::min(ambient.red() + diffuse.red() + specular.red(), 255);
-    int g = std::min(ambient.green() + diffuse.green() + specular.green(), 255);
-    int b = std::min(ambient.blue() + diffuse.blue() + specular.blue(), 255);*/
-
-    return color;
+QVector<QPointF> Render::calcProj(QVector<QVector3D> &points) {
+    QVector<QPointF> projs;
+    double perspective = 1000;
+    for (const auto &point : points) {
+        double scale = perspective / (perspective + point.z());
+        double x = _width / 2 + point.x() * scale;
+        double y = _height / 2 + point.y() * scale;
+        projs.append(QPointF(x, y));
+    }
+    return projs;
 }
 
-QVector3D Render::calcNormal(QVector3D n1, QVector3D n2, QVector3D n3, QVector3D barometric)
-{
-    QVector3D normal;
-    normal.setX(n1.x() * barometric.x() + n2.x() * barometric.y() + n3.x() * barometric.z());
-    normal.setY(n1.y() * barometric.x() + n2.y() * barometric.y() + n3.y() * barometric.z());
-    normal.setZ(n1.z() * barometric.x() + n2.z() * barometric.y() + n3.z() * barometric.z());
-    return normal;
+void Render::resetBuffers() {
+    for (auto &row : _z_buffer)
+        std::fill(row.begin(), row.end(), std::numeric_limits<double>::infinity());
+    for (auto &row : _image_buffer)
+        std::fill(row.begin(), row.end(), Qt::black);
 }
-
