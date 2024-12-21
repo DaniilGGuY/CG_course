@@ -8,8 +8,8 @@
 #include "3d/objects/model/surfacemodel.h"
 #include "3d/render/render.h"
 
-#define MXW   50
-#define MXH   50
+#define MXW   80
+#define MXH   80
 
 class Scene3D : public QGraphicsScene
 {
@@ -19,7 +19,7 @@ public:
     explicit Scene3D(QObject *parent = 0);
     ~Scene3D();
 
-    void loadModel(BasePlasma *plasma);
+    void loadModel(BasePlasma *plasma, bool monotic);
 
     void cameraRotateXZ(double delta);
     void cameraRotateZY(double delta);

@@ -11,7 +11,7 @@ public:
     QVector<QVector<int>> _faces;
     QVector<QColor> _colors;
 
-    static SurfaceModel formModel(QVector<QVector<double>> map, QVector<QVector<QColor>> colors, int mxw, int mxh);
+    static SurfaceModel formModel(QVector<QVector<double>> map, QVector<QVector<QColor>> colors, int mxw, int mxh, bool monotic);
 private:
     void centralizeModel();
 };

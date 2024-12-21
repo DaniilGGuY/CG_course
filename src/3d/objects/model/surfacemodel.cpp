@@ -1,7 +1,7 @@
 #include "surfacemodel.h"
 #include <QDebug>
 
-SurfaceModel SurfaceModel::formModel(QVector<QVector<double>> map, QVector<QVector<QColor>> colors, int mxw, int mxh) {
+SurfaceModel SurfaceModel::formModel(QVector<QVector<double>> map, QVector<QVector<QColor>> colors, int mxw, int mxh, bool monotic) {
     SurfaceModel model;
 
     int n = map.size(), m = map[0].size();
@@ -17,10 +17,14 @@ SurfaceModel SurfaceModel::formModel(QVector<QVector<double>> map, QVector<QVect
         for (int j = 0; j < m - stepj; j += stepj) {
             model._faces.append({i * m + j, i * m + j + stepj, (i + stepi) * m + j});
             model._faces.append({i * m + j + stepj, (i + stepi) * m + j, (i + stepi) * m + j + stepj});
-            model._colors.append(colors[i][j]);
-            model._colors.append(colors[i + stepi][j + stepj]);
-            //model._colors.append(base);
-            //model._colors.append(base);
+            if (monotic) {
+                model._colors.append(base);
+                model._colors.append(base);
+            }
+            else {
+                model._colors.append(colors[i][j]);
+                model._colors.append(colors[i + stepi][j + stepj]);
+            }
         }
 
     model.centralizeModel();

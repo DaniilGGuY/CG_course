@@ -39,10 +39,13 @@ private slots:
 
     void on_landscapeParamsButton_clicked();
 
+    void on_landscapeColorButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     BasePlasma *_plasma;
     Scene3D *_scene3d;
+    bool _monotic;
 };
 
 #endif // MAINWINDOW_H

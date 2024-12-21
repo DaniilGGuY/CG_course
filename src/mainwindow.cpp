@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     _scene3d->setSceneRect(0, 0, WIDTH, HEIGHT);
     _scene3d->setParams(WIDTH, HEIGHT, {0, 1000, 0});
     ui->view3D->setScene(_scene3d);
+    _monotic = false;
 }
 
 MainWindow::~MainWindow()
@@ -93,7 +94,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::on_buildLandscape_clicked()
 {
-    _scene3d->loadModel(_plasma);
+    _scene3d->loadModel(_plasma, _monotic);
     _scene3d->draw();
 }
 
@@ -107,5 +108,14 @@ void MainWindow::on_setLight_clicked()
 void MainWindow::on_landscapeParamsButton_clicked()
 {
     _scene3d->setInterpols(ui->landscapeXWidthSpin->value(), ui->landscapeYWidthSpin->value());
+    _scene3d->loadModel(_plasma, _monotic);
+    _scene3d->draw();
+}
+
+void MainWindow::on_landscapeColorButton_clicked()
+{
+    _monotic = 1 - _monotic;
+    _scene3d->loadModel(_plasma, _monotic);
+    _scene3d->draw();
 }
 

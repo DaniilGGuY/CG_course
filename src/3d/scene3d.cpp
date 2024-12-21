@@ -22,7 +22,10 @@ void Scene3D::setInterpols(int mxw, int mxh)
     _mxh = mxh;
 }
 
-void Scene3D::loadModel(BasePlasma *plasma) { _model = SurfaceModel::formModel(plasma->getHeight(), plasma->getColors(), _mxw, _mxh); }
+void Scene3D::loadModel(BasePlasma *plasma, bool monotic)
+{
+    _model = SurfaceModel::formModel(plasma->getHeight(), plasma->getColors(), _mxw, _mxh, monotic);
+}
 
 void Scene3D::cameraRotateXZ(double delta) { _camera.addXZ(delta); }
 
